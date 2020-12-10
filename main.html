@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Github README Viewer</title>
+        <!-- VueJS -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js" type="text/javascript"></script>
+        <!-- Vuex -->
+        <script src="https://unpkg.com/vuex@3.5.1/dist/vuex.js"></script>
+        <!-- Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" type="text/javascript"></script>
+        <!-- MarkedJS -->
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <h2>GitHub repo viewer</h2>
+            <select-username-component @send-to-parent="assignAllRepoAPICallData" @reset-data="resetData"></select-username-component>
+            <view-user-component @send-to-parent="assignReadmeData" v-if="usernameFounded" :all-repo-api-call-data="allRepoAPICallData"></view-user-component>
+            <div id="view-repo">
+                <p>Content of the selected repo README file:</p>
+                <div id="readme-content">
+                </div>
+            </div>
+        </div>
+        <template id="select-username-template">
+            <div id="select-username">
+                <div id="enter-username-form">
+                    <label for="usernameChoice">Please input your Github username</label>
+                    <input v-model="usernameChoice" id="usernameChoice" placeholder="Enter your username" :disabled="inputDone">
+                    <button @click="checkForm" :disabled="usernameChoice.length == 0">Submit</button>
+                    <button @click="disableInputDone" :disabled="!inputDone">Check another username</button>
+                </div>
+                <div id="errors-and-warnings">
+                    <p v-if="errCode != null">Github API return status code: {{errCode}}. Please use another username</p>
+                </div>
+            </div>
+        </template>
+        <template id="view-user-template">
+            <div id="view-user">
+                <p>Here is the list of repo found using the selected username</p>
+                <div id="select-repo-name">
+                    <select v-model="repoNameChoice">
+                        <option disabled>Please select one</option>
+                        <option v-for="name in allRepoApiCallData.allRepoName":key="name" :value="name">{{name}}</option>
+                    </select>
+                    <button @click="checkForm">Find repo</button>
+                </div>
+                <p v-if="readmeNotFounded">No README file found in the selected Git Repository</p>
+            </div>
+        </template>
+    </body>
+    <footer>
+        <!-- Main script -->
+        <script type='text/javascript' src="./main.js"></script>
+    </footer>
+</html>
